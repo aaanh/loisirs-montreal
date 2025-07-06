@@ -14,7 +14,7 @@ export function PageHeader() {
 
       <Alert className='bg-neutral-900 text-left' variant={'warning'}>
         <AlertCircleIcon />
-        <AlertTitle>Project is currently every alpha and experimental</AlertTitle>
+        <AlertTitle>Project is currently very early alpha and experimental</AlertTitle>
         <AlertDescription>
           <p>Please report any issues or bugs you encounter at <a href="https://github.com/aaanh/loisirs-montreal/issues/new" className='underline'>https://github.com/aaanh/loisirs-montreal/issues/new</a>.</p>
 
