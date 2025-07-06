@@ -14,6 +14,7 @@ import { FacilityTypesCard } from '@/components/facility-types-card';
 import { BoroughsCard } from '@/components/boroughs-card';
 import { SortOptionsCard } from '@/components/sort-options-card';
 import { UrlOutputCard } from '@/components/url-output-card';
+import { PageFooter } from '@/components/page-footer';
 
 export default function Home() {
   const [searchParams, setSearchParams] = useState<SearchParams>({
@@ -88,8 +89,8 @@ export default function Home() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl pb-40 lg:pb-8">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex flex-col">
+      <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
         <PageHeader />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -179,6 +180,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <PageFooter />
     </div>
   );
 }
