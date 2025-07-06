@@ -31,7 +31,7 @@ I prototyped the UI and inferred the search parameters with AI (least effort pos
 
 Anyone interested in making it better is welcomed to fork and open a pull request.
 
-For details, please see the [CONTRIBUTING.md](contributing.md).
+For details, please see the [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # Community Code of Conduct
 
