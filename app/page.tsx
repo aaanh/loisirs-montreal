@@ -42,6 +42,23 @@ const facilityTypes = [
   { id: '150', name: 'Baseball Fields', icon: '⚾' },
   { id: '160', name: 'Volleyball Courts', icon: '🏐' },
   { id: '170', name: 'Gymnasiums', icon: '🤸' },
+  { id: '180', name: 'Type de plateau', icon: '🏟️' },
+  { id: '181', name: 'Aire act libre', icon: '🏃' },
+  { id: '182', name: 'Aire de patinage', icon: '⛸️' },
+  { id: '183', name: 'Gymnase', icon: '🏋️' },
+  { id: '184', name: 'Installation', icon: '🏗️' },
+  { id: '185', name: 'Palestre de gym', icon: '🤸‍♀️' },
+  { id: '186', name: 'Piste et pelouse', icon: '🏃‍♂️' },
+  { id: '187', name: 'Salle d\'étude', icon: '📚' },
+  { id: '188', name: 'Salle poly/act', icon: '🎭' },
+  { id: '189', name: 'Soccer à 11 int', icon: '⚽' },
+  { id: '190', name: 'Soccer à 7 extérieur', icon: '🌿' },
+  { id: '191', name: 'Soccer à 7 intérieur', icon: '🏠' },
+  { id: '192', name: 'Tennis de table', icon: '🏓' },
+  { id: '193', name: 'Terrain de badminton', icon: '🏸' },
+  { id: '194', name: 'Terrain tennis ext', icon: '🎾' },
+  { id: '195', name: 'Terrain tennis int', icon: '🎾' },
+  { id: '196', name: 'Volley-ball plage', icon: '🏖️' },
 ];
 
 const boroughs = [
@@ -303,7 +320,7 @@ export default function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {facilityTypes.map((facility) => (
                     <div key={facility.id} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                       <Checkbox
@@ -315,7 +332,7 @@ export default function Home() {
                         htmlFor={facility.id}
                         className="flex items-center gap-2 cursor-pointer flex-1"
                       >
-                        <span className="text-xl">{facility.icon}</span>
+                        <span className="text-lg">{facility.icon}</span>
                         <span className="text-sm font-medium">{facility.name}</span>
                       </Label>
                     </div>
