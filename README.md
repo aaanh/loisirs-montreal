@@ -1,5 +1,6 @@
 # Loisirs Montreal Helper
 
+https://loisirs-mtl-helper.aaanh.app
 
 ![](https://img.shields.io/badge/status-experimental-yellow) ![Vercel](https://vercelbadge.vercel.app/api/aaanh/loisirs-montreal)
 
@@ -11,7 +12,7 @@ Thank you Reddit for igniting this idea in me.
 > https://www.reddit.com/r/montreal/comments/1lpiihu/comment/n102zrz/?context=3
 
 > [!WARNING]
-> Please note that the project is currently every alpha and experimental, so there will be bugs and misconfigured search options. If you encounter such errors, please open an issue at <https://github.com/aaanh/loisirs-montreal/issues/new>.
+> Please note that the project is currently very early alpha and experimental, so there will be bugs and misconfigured search options. If you encounter such errors, please open an issue at <https://github.com/aaanh/loisirs-montreal/issues/new>.
 >
 > Please copy and paste, _in full_, the erroneous URL in the description. Add screenshots or details of the options you selected.
 
