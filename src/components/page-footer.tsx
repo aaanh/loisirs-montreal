@@ -21,7 +21,8 @@ export function PageFooter() {
             <h3 className="text-lg font-semibold mb-4">About This Tool</h3>
             <p className="text-gray-300 text-sm leading-relaxed mb-4">
               This tool is not affiliated with, endorsed by, or associated with Loisirs Montreal,
-              the City of Montreal, or any government entity. It is created to help users build search URLs for the Loisirs Montreal website.
+              the City of Montreal, or any government entity. It is an independent, open-source
+              project created to help users build search URLs for the Loisirs Montreal website.
             </p>
             <p className="text-gray-300 text-sm leading-relaxed">
               This is an open-source project. Feel free to contribute or report issues on GitHub.
@@ -55,7 +56,7 @@ export function PageFooter() {
           </div>
 
           {/* Creator Info */}
-          <div className='py-2'>
+          <div>
             <h3 className="text-lg font-semibold mb-4">Creator</h3>
             <div className="space-y-3">
               <p className="text-gray-300 text-sm leading-relaxed flex items-center gap-1">
@@ -88,7 +89,7 @@ export function PageFooter() {
 
       {/* Copyleft */}
       <div className="border-t border-gray-700 pt-6 text-center">
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-sm">
           © 2025 - Copyleft - This work is free. You can redistribute it and/or modify it under
           the terms of the GNU General Public License as published by the Free Software Foundation.
         </p>
