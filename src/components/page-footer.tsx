@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ExternalLink, Linkedin } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { ExternalLink, Linkedin } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function PageFooter() {
   const [fullUrl, setFullUrl] = useState<string | null>(null);
@@ -13,30 +13,35 @@ export function PageFooter() {
   if (!fullUrl) return null; // or loading placeholder
 
   return (
-    <footer className="bg-foreground text-white py-8 mt-16 min-h-[50vh] flex flex-col">
-      <div className="container mx-auto px-4 max-w-6xl flex-1">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <footer className="flex flex-col bg-foreground mt-16 py-8 min-h-[50vh] text-white">
+      <div className="flex-1 mx-auto p-4 max-w-6xl container">
+        <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
           {/* Project Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">About This Tool</h3>
-            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-              This tool is not affiliated with, endorsed by, or associated with Loisirs Montreal,
-              the City of Montreal, or any government entity. It is an independent, open-source
-              project created to help users build search URLs for the Loisirs Montreal website.
+            <h3 className="mb-4 font-semibold text-lg">About This Tool</h3>
+            <p className="mb-4 text-gray-300 text-sm leading-relaxed">
+              This tool is not affiliated with, endorsed by, or associated with
+              Loisirs Montreal, the City of Montreal, or any government entity.
+              It is an independent, open-source project created to help users
+              build search URLs for the Loisirs Montreal website.
             </p>
             <p className="text-gray-300 text-sm leading-relaxed">
-              This is an open-source project. Feel free to contribute or report issues on GitHub.
+              This is an open-source project. Feel free to contribute or report
+              issues on GitHub.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Links</h3>
+            <h3 className="mb-4 font-semibold text-lg">Links</h3>
             <div className="space-y-2">
               <p className="text-gray-300 text-sm">
                 <span className="font-medium">Site URL:</span>
                 <br />
-                <a className="underline text-blue-500 hover:text-blue-400" href={fullUrl}>
+                <a
+                  className="text-blue-500 hover:text-blue-400 underline"
+                  href={fullUrl}
+                >
                   {fullUrl}
                 </a>
               </p>
@@ -44,7 +49,7 @@ export function PageFooter() {
                 <span className="font-medium">GitHub:</span>
                 <br />
                 <a
-                  className="underline text-blue-500 hover:text-blue-400"
+                  className="text-blue-500 hover:text-blue-400 underline"
                   href="https://github.com/aaanh/loisirs-montreal"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -57,15 +62,15 @@ export function PageFooter() {
 
           {/* Creator Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Creator</h3>
+            <h3 className="mb-4 font-semibold text-lg">Creator</h3>
             <div className="space-y-3">
-              <p className="text-gray-300 text-sm leading-relaxed flex items-center gap-1">
+              <p className="flex items-center gap-1 text-gray-300 text-sm leading-relaxed">
                 <span>Built with ❤️ by</span>
                 <a
                   href="https://aaanh.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline inline-flex items-center gap-1"
+                  className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
                 >
                   Anh <ExternalLink className="w-3 h-3" />
                 </a>
@@ -75,7 +80,7 @@ export function PageFooter() {
                   href="https://linkedin.com/in/aaanh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline inline-flex items-center gap-1"
+                  className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
                   title="LinkedIn Profile"
                 >
                   <Linkedin className="w-4 h-4" />
@@ -88,12 +93,13 @@ export function PageFooter() {
       </div>
 
       {/* Copyleft */}
-      <div className="border-t border-gray-700 pt-6 text-center">
+      <div className="pt-6 border-gray-700 border-t text-center">
         <p className="text-gray-400 text-sm">
-          © 2025 - Copyleft - This work is free. You can redistribute it and/or modify it under
-          the terms of the GNU General Public License as published by the Free Software Foundation.
+          © 2025 - Copyleft - This work is free. You can redistribute it and/or
+          modify it under the terms of the GNU General Public License as
+          published by the Free Software Foundation.
         </p>
       </div>
     </footer>
   );
-} 
+}

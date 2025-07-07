@@ -1,46 +1,55 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { SearchParams } from '@/types/search';
-import { facilityTypes } from '@/data/facility-types';
-import { boroughs } from '@/data/boroughs';
-import { sortColumns } from '@/data/sort-columns';
-import { generateUrl } from '@/utils/url-generator';
-import { PageHeader } from '@/components/page-header';
-import { SearchQueryCard } from '@/components/search-query-card';
-import { TimeRangeCard } from '@/components/time-range-card';
-import { DateSelectionCard } from '@/components/date-selection-card';
-import { FacilityTypesCard } from '@/components/facility-types-card';
-import { BoroughsCard } from '@/components/boroughs-card';
-import { SortOptionsCard } from '@/components/sort-options-card';
-import { UrlOutputCard } from '@/components/url-output-card';
-import { PageFooter } from '@/components/page-footer';
+import { useState, useEffect } from "react";
+import { SearchParams } from "@/types/search";
+import { facilityTypes } from "@/data/facility-types";
+import { boroughs } from "@/data/boroughs";
+import { sortColumns } from "@/data/sort-columns";
+import { generateUrl } from "@/utils/url-generator";
+import { PageHeader } from "@/components/page-header";
+import { SearchQueryCard } from "@/components/search-query-card";
+import { DateTimeSelectionCard } from "@/components/date-selection-card";
+import { FacilityTypesCard } from "@/components/facility-types-card";
+import { BoroughsCard } from "@/components/boroughs-card";
+import { UrlOutputCard } from "@/components/url-output-card";
+import { PageFooter } from "@/components/page-footer";
 
 export default function Home() {
+  const now = new Date();
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+    now.getDate()
+  )}`;
+  const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const startTimeISO = `${dateStr}T${timeStr}:00.000-04:00`;
+  const end = new Date(now.getTime() + 60 * 60 * 1000);
+  const endTimeStr = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
+  const endTimeISO = `${dateStr}T${endTimeStr}:00.000-04:00`;
+
   const [searchParams, setSearchParams] = useState<SearchParams>({
     filter: {
       isCollapsed: false,
       value: {
-        startTime: '2025-07-05T18:00:00.000-04:00',
-        endTime: '2025-07-05T22:45:00.000-04:00',
-        dates: ['2025-07-06T00:00:00.000-04:00'],
-        facilityTypeIds: '195,146,128,1,143,194,75,152,118,176,115,113,178,175,114,66',
-        boroughIds: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
+        startTime: startTimeISO,
+        endTime: endTimeISO,
+        dates: [startTimeISO],
+        facilityTypeIds: "",
+        boroughIds: "",
       },
     },
-    search: 'tennis',
+    search: "",
     sortable: {
       isOrderAsc: true,
-      column: 'facility.name',
+      column: "facility.name",
     },
   });
 
-  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(['195', '146', '128', '1', '143', '194', '75', '152', '118', '176', '115', '113', '178', '175', '114', '66']);
-  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15']);
-  const [generatedUrl, setGeneratedUrl] = useState<string>('');
+  const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
+  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
+  const [generatedUrl, setGeneratedUrl] = useState<string>("");
 
   const updateSearchParams = (updates: Partial<SearchParams>) => {
-    setSearchParams(prev => ({
+    setSearchParams((prev) => ({
       ...prev,
       ...updates,
       filter: {
@@ -52,7 +61,7 @@ export default function Home() {
 
   const handleFacilityToggle = (facilityId: string) => {
     const newSelected = selectedFacilities.includes(facilityId)
-      ? selectedFacilities.filter(id => id !== facilityId)
+      ? selectedFacilities.filter((id) => id !== facilityId)
       : [...selectedFacilities, facilityId];
 
     setSelectedFacilities(newSelected);
@@ -61,7 +70,7 @@ export default function Home() {
         ...searchParams.filter,
         value: {
           ...searchParams.filter.value,
-          facilityTypeIds: newSelected.join(','),
+          facilityTypeIds: newSelected.join(","),
         },
       },
     });
@@ -69,7 +78,7 @@ export default function Home() {
 
   const handleBoroughToggle = (boroughId: string) => {
     const newSelected = selectedBoroughs.includes(boroughId)
-      ? selectedBoroughs.filter(id => id !== boroughId)
+      ? selectedBoroughs.filter((id) => id !== boroughId)
       : [...selectedBoroughs, boroughId];
 
     setSelectedBoroughs(newSelected);
@@ -78,7 +87,59 @@ export default function Home() {
         ...searchParams.filter,
         value: {
           ...searchParams.filter.value,
-          boroughIds: newSelected.join(','),
+          boroughIds: newSelected.join(","),
+        },
+      },
+    });
+  };
+
+  const handleSetAllFacilities = (ids: string[]) => {
+    setSelectedFacilities(ids);
+    updateSearchParams({
+      filter: {
+        ...searchParams.filter,
+        value: {
+          ...searchParams.filter.value,
+          facilityTypeIds: ids.join(","),
+        },
+      },
+    });
+  };
+
+  const handleSetAllBoroughs = (ids: string[]) => {
+    setSelectedBoroughs(ids);
+    updateSearchParams({
+      filter: {
+        ...searchParams.filter,
+        value: {
+          ...searchParams.filter.value,
+          boroughIds: ids.join(","),
+        },
+      },
+    });
+  };
+
+  const handleClearAllFacilities = () => {
+    setSelectedFacilities([]);
+    updateSearchParams({
+      filter: {
+        ...searchParams.filter,
+        value: {
+          ...searchParams.filter.value,
+          facilityTypeIds: "",
+        },
+      },
+    });
+  };
+
+  const handleClearAllBoroughs = () => {
+    setSelectedBoroughs([]);
+    updateSearchParams({
+      filter: {
+        ...searchParams.filter,
+        value: {
+          ...searchParams.filter.value,
+          boroughIds: "",
         },
       },
     });
@@ -89,82 +150,91 @@ export default function Home() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex flex-col">
-      <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
+    <div className="flex flex-col bg-linear-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+      <div className="flex-1 mx-auto px-4 py-8 max-w-6xl container">
         <PageHeader />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
           {/* Left Column - Filters */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             <SearchQueryCard
               searchValue={searchParams.search}
               onSearchChange={(value) => updateSearchParams({ search: value })}
+              sortColumns={sortColumns}
+              currentColumn={searchParams.sortable.column}
+              isOrderAsc={searchParams.sortable.isOrderAsc}
+              onColumnChange={(value) =>
+                updateSearchParams({
+                  sortable: {
+                    ...searchParams.sortable,
+                    column: value,
+                  },
+                })
+              }
+              onOrderChange={(value) =>
+                updateSearchParams({
+                  sortable: {
+                    ...searchParams.sortable,
+                    isOrderAsc: value,
+                  },
+                })
+              }
             />
 
-            <TimeRangeCard
+            {/* Date & Time Selection */}
+            <DateTimeSelectionCard
+              date={searchParams.filter.value.dates[0] || ""}
               startTime={searchParams.filter.value.startTime}
               endTime={searchParams.filter.value.endTime}
-              onStartTimeChange={(value) => updateSearchParams({
-                filter: {
-                  ...searchParams.filter,
-                  value: {
-                    ...searchParams.filter.value,
-                    startTime: value,
+              onDateChange={(value) =>
+                updateSearchParams({
+                  filter: {
+                    ...searchParams.filter,
+                    value: {
+                      ...searchParams.filter.value,
+                      dates: [value],
+                    },
                   },
-                },
-              })}
-              onEndTimeChange={(value) => updateSearchParams({
-                filter: {
-                  ...searchParams.filter,
-                  value: {
-                    ...searchParams.filter.value,
-                    endTime: value,
+                })
+              }
+              onStartTimeChange={(value) =>
+                updateSearchParams({
+                  filter: {
+                    ...searchParams.filter,
+                    value: {
+                      ...searchParams.filter.value,
+                      startTime: value,
+                    },
                   },
-                },
-              })}
-            />
-
-            <DateSelectionCard
-              date={searchParams.filter.value.dates[0] || ''}
-              onDateChange={(value) => updateSearchParams({
-                filter: {
-                  ...searchParams.filter,
-                  value: {
-                    ...searchParams.filter.value,
-                    dates: [value],
+                })
+              }
+              onEndTimeChange={(value) =>
+                updateSearchParams({
+                  filter: {
+                    ...searchParams.filter,
+                    value: {
+                      ...searchParams.filter.value,
+                      endTime: value,
+                    },
                   },
-                },
-              })}
+                })
+              }
             />
 
             <FacilityTypesCard
               facilityTypes={facilityTypes}
               selectedFacilities={selectedFacilities}
               onFacilityToggle={handleFacilityToggle}
+              onSetAllFacilities={handleSetAllFacilities}
+              onClearAllFacilities={handleClearAllFacilities}
             />
 
             <BoroughsCard
               boroughs={boroughs}
               selectedBoroughs={selectedBoroughs}
               onBoroughToggle={handleBoroughToggle}
-            />
-
-            <SortOptionsCard
-              sortColumns={sortColumns}
-              currentColumn={searchParams.sortable.column}
-              isOrderAsc={searchParams.sortable.isOrderAsc}
-              onColumnChange={(value) => updateSearchParams({
-                sortable: {
-                  ...searchParams.sortable,
-                  column: value,
-                },
-              })}
-              onOrderChange={(value) => updateSearchParams({
-                sortable: {
-                  ...searchParams.sortable,
-                  isOrderAsc: value,
-                },
-              })}
+              onSetAllBoroughs={handleSetAllBoroughs}
+              onClearAllBoroughs={handleClearAllBoroughs}
             />
           </div>
 
@@ -180,6 +250,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {/* Spacer for mobile to allow scrolling past the fixed URL card */}
+      <div className="lg:hidden h-60" />
       <PageFooter />
     </div>
   );

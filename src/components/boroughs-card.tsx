@@ -1,32 +1,74 @@
-import { MapPin } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Borough } from '@/types/search';
+import { MapPin, MapPinHouse, MapPinHouseIcon } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Borough } from "@/types/search";
+import { Button } from "@/components/ui/button";
 
 interface BoroughsCardProps {
   boroughs: Borough[];
   selectedBoroughs: string[];
-  onBoroughToggle: (boroughId: string) => void;
+  onBoroughToggle: (id: string) => void;
+  onSetAllBoroughs: (ids: string[]) => void;
+  onClearAllBoroughs: () => void;
 }
 
-export function BoroughsCard({ boroughs, selectedBoroughs, onBoroughToggle }: BoroughsCardProps) {
+export function BoroughsCard({
+  boroughs,
+  selectedBoroughs,
+  onBoroughToggle,
+  onSetAllBoroughs,
+  onClearAllBoroughs,
+}: BoroughsCardProps) {
+  const allSelected =
+    boroughs.length > 0 && selectedBoroughs.length === boroughs.length;
+  const anySelected = selectedBoroughs.length > 0;
+  const handleSelectAll = () => {
+    onSetAllBoroughs(boroughs.map((b) => b.id));
+  };
+  const handleDeselectAll = () => {
+    onClearAllBoroughs();
+  };
+
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-linear-to-r from-indigo-600 to-blue-600 text-white rounded-t-lg">
+      <CardHeader className="flex items-center bg-linear-to-r from-yellow-600 to-orange-600 rounded-t-lg text-white">
         <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
-          <MapPin className="w-5 h-5" />
-          Montreal Boroughs
+          <MapPinHouseIcon /> Boroughs
         </CardTitle>
-        <CardDescription className="text-indigo-100 text-sm lg:text-base">
-          Choose which boroughs to include in your search
-        </CardDescription>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleSelectAll}
+            className="text-xs"
+          >
+            Select All
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleDeselectAll}
+            className="text-xs"
+          >
+            Deselect All
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-4 lg:p-6">
-        <div className="grid grid-cols-1 gap-3">
+        <div className="gap-3 grid grid-cols-1 lg:grid-cols-2">
           {boroughs.map((borough) => (
-            <div key={borough.id} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+            <div
+              key={borough.id}
+              className="flex items-center space-x-3 hover:bg-gray-50 p-3 border border-gray-200 rounded-lg transition-colors"
+            >
               <Checkbox
                 id={borough.id}
                 checked={selectedBoroughs.includes(borough.id)}
@@ -34,24 +76,30 @@ export function BoroughsCard({ boroughs, selectedBoroughs, onBoroughToggle }: Bo
               />
               <Label
                 htmlFor={borough.id}
-                className="flex items-center gap-2 cursor-pointer flex-1 min-w-0 text-sm lg:text-base"
+                className="flex flex-1 items-center gap-2 min-w-0 text-sm cursor-pointer"
               >
-                <div className={`w-3 h-3 rounded-full ${borough.color} flex-shrink-0`} />
+                <div
+                  className={`w-3 h-3 rounded-full ${borough.color} flex-shrink-0`}
+                />
                 <span className="font-medium truncate">{borough.name}</span>
               </Label>
             </div>
           ))}
         </div>
         <div className="mt-4">
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="mb-2 text-gray-600 text-sm">
             Selected: {selectedBoroughs.length} of {boroughs.length} boroughs
           </p>
           <div className="flex flex-wrap gap-1">
             {selectedBoroughs.slice(0, 4).map((id) => {
-              const borough = boroughs.find(b => b.id === id);
+              const borough = boroughs.find((b) => b.id === id);
               return borough ? (
-                <Badge key={id} variant="outline" className="text-xs max-w-full">
-                  <span className="truncate block">{borough.name}</span>
+                <Badge
+                  key={id}
+                  variant="outline"
+                  className="max-w-full text-xs"
+                >
+                  <span className="block truncate">{borough.name}</span>
                 </Badge>
               ) : null;
             })}
@@ -65,4 +113,4 @@ export function BoroughsCard({ boroughs, selectedBoroughs, onBoroughToggle }: Bo
       </CardContent>
     </Card>
   );
-} 
+}
