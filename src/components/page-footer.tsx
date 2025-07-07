@@ -95,9 +95,11 @@ export function PageFooter() {
       {/* Copyleft */}
       <div className="pt-6 border-gray-700 border-t text-center">
         <p className="text-gray-400 text-sm">
-          © 2025 - Copyleft - This work is free. You can redistribute it and/or
-          modify it under the terms of the GNU General Public License as
-          published by the Free Software Foundation.
+          Copyright (C) 2025 Anh Hoang Nguyen anhnguyen@aaanh.com
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
         </p>
       </div>
     </footer>
