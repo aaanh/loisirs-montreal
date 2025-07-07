@@ -155,21 +155,21 @@ export function UrlOutputCard({
                       <div className="space-y-4">
                         <div className="flex flex-col gap-2">
                           <Button
-                            onClick={copyToClipboard}
-                            className="bg-linear-to-r from-blue-600 hover:from-blue-700 to-purple-600 hover:to-purple-700 w-full transition-all duration-300"
-                            disabled={!generatedUrl}
-                          >
-                            <Copy className="mr-2 w-4 h-4" />
-                            {copied ? "Copied!" : "Copy URL"}
-                          </Button>
-                          <Button
                             onClick={openInNewTab}
-                            variant="outline"
-                            className="hover:bg-gray-50 border-gray-300 w-full transition-all duration-300"
+                            className="bg-linear-to-r from-blue-600 hover:from-blue-700 to-purple-600 hover:to-purple-700 w-full transition-all duration-300"
                             disabled={!generatedUrl}
                           >
                             <ExternalLink className="mr-2 w-4 h-4" />
                             Open in Loisirs Montreal
+                          </Button>
+                          <Button
+                            onClick={copyToClipboard}
+                            disabled={!generatedUrl}
+                            variant="outline"
+                            className="hover:bg-gray-50 border-gray-300 w-full transition-all duration-300"
+                          >
+                            <Copy className="mr-2 w-4 h-4" />
+                            {copied ? "Copied!" : "Copy URL"}
                           </Button>
                         </div>
 
