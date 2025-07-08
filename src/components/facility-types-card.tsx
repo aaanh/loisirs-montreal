@@ -40,7 +40,7 @@ export function FacilityTypesCard({
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="flex items-center bg-linear-to-r from-green-600 to-blue-600 rounded-t-lg text-white">
+      <CardHeader className="flex flex-wrap items-center gap-2 bg-linear-to-r from-green-600 to-blue-600 rounded-t-lg text-white">
         <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
           <Filter className="w-5 h-5" />
           Facility Types | Types de plateau

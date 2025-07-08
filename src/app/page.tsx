@@ -13,6 +13,18 @@ import { FacilityTypesCard } from "@/components/facility-types-card";
 import { BoroughsCard } from "@/components/boroughs-card";
 import { UrlOutputCard } from "@/components/url-output-card";
 import { PageFooter } from "@/components/page-footer";
+import NotesCard from "@/components/notes-card";
+
+function encodeParams(params: SearchParams) {
+  return btoa(encodeURIComponent(JSON.stringify(params)));
+}
+function decodeParams(str: string): SearchParams | null {
+  try {
+    return JSON.parse(decodeURIComponent(atob(str)));
+  } catch {
+    return null;
+  }
+}
 
 export default function Home() {
   const now = new Date();
@@ -43,10 +55,15 @@ export default function Home() {
       column: "facility.name",
     },
   });
-
-  const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
-  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
   const [generatedUrl, setGeneratedUrl] = useState<string>("");
+
+  // Derive selectedFacilities and selectedBoroughs from searchParams
+  const selectedFacilities = searchParams.filter.value.facilityTypeIds
+    ? searchParams.filter.value.facilityTypeIds.split(",").filter(Boolean)
+    : [];
+  const selectedBoroughs = searchParams.filter.value.boroughIds
+    ? searchParams.filter.value.boroughIds.split(",").filter(Boolean)
+    : [];
 
   const updateSearchParams = (updates: Partial<SearchParams>) => {
     setSearchParams((prev) => ({
@@ -63,8 +80,6 @@ export default function Home() {
     const newSelected = selectedFacilities.includes(facilityId)
       ? selectedFacilities.filter((id) => id !== facilityId)
       : [...selectedFacilities, facilityId];
-
-    setSelectedFacilities(newSelected);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -80,8 +95,6 @@ export default function Home() {
     const newSelected = selectedBoroughs.includes(boroughId)
       ? selectedBoroughs.filter((id) => id !== boroughId)
       : [...selectedBoroughs, boroughId];
-
-    setSelectedBoroughs(newSelected);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -94,7 +107,6 @@ export default function Home() {
   };
 
   const handleSetAllFacilities = (ids: string[]) => {
-    setSelectedFacilities(ids);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -107,7 +119,6 @@ export default function Home() {
   };
 
   const handleSetAllBoroughs = (ids: string[]) => {
-    setSelectedBoroughs(ids);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -120,7 +131,6 @@ export default function Home() {
   };
 
   const handleClearAllFacilities = () => {
-    setSelectedFacilities([]);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -133,7 +143,6 @@ export default function Home() {
   };
 
   const handleClearAllBoroughs = () => {
-    setSelectedBoroughs([]);
     updateSearchParams({
       filter: {
         ...searchParams.filter,
@@ -147,6 +156,27 @@ export default function Home() {
 
   useEffect(() => {
     setGeneratedUrl(generateUrl(searchParams));
+  }, [searchParams]);
+
+  // On mount, check for URL param and update state if present
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const param = url.searchParams.get("q");
+    if (param) {
+      const decoded = decodeParams(param);
+      if (decoded) setSearchParams(decoded);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  // Sync URL with state
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const encoded = encodeParams(searchParams);
+    const url = new URL(window.location.href);
+    url.searchParams.set("q", encoded);
+    window.history.replaceState({}, "", url.toString());
   }, [searchParams]);
 
   return (
@@ -180,6 +210,8 @@ export default function Home() {
                 })
               }
             />
+
+            <NotesCard />
 
             {/* Date & Time Selection */}
             <DateTimeSelectionCard

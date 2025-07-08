@@ -35,7 +35,7 @@ export function PageFooter() {
           <div>
             <h3 className="mb-4 font-semibold text-lg">Links</h3>
             <div className="space-y-2">
-              <p className="text-gray-300 text-sm">
+              <p className="w-2/3 overflow-ellipsis overflow-hidden text-gray-300 text-sm break-after-all break-words whitespace-nowrap">
                 <span className="font-medium">Site URL:</span>
                 <br />
                 <a
@@ -95,11 +95,11 @@ export function PageFooter() {
       {/* Copyleft */}
       <div className="pt-6 border-gray-700 border-t text-center">
         <p className="text-gray-400 text-sm">
-          Copyright (C) 2025 Anh Hoang Nguyen anhnguyen@aaanh.com
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+          Copyright (C) 2025 Anh Hoang Nguyen anhnguyen@aaanh.com This program
+          is free software: you can redistribute it and/or modify it under the
+          terms of the GNU General Public License as published by the Free
+          Software Foundation, either version 3 of the License, or (at your
+          option) any later version.
         </p>
       </div>
     </footer>

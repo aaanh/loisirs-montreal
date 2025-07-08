@@ -39,7 +39,7 @@ export function BoroughsCard({
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="flex items-center bg-linear-to-r from-yellow-600 to-orange-600 rounded-t-lg text-white">
+      <CardHeader className="flex flex-wrap items-center gap-2 bg-linear-to-r from-yellow-600 to-orange-600 rounded-t-lg text-white">
         <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
           <MapPinHouseIcon /> Boroughs
         </CardTitle>
