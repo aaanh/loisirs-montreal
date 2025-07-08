@@ -25,7 +25,7 @@ And updating search criteria, even small ones, triggers a search without the use
 
 # How I did it
 
-I prototyped the UI and inferred the search parameters with AI (least effort possible) and refined the app from there.
+I prototyped the UI and ~inferred the search parameters with AI~ (well it turns out it's kinda dumb so I just do it myself) and refined the app from there.
 
 # Contributing
 
