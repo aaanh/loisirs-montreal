@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { SearchParams, SortColumn } from "@/types/search";
+import QRCodeContainer from "./qr-code";
 
 interface UrlOutputCardProps {
   generatedUrl: string;
@@ -325,6 +326,10 @@ export function UrlOutputCard({
                   />
                 </div>
               </div>
+
+              <Separator className="my-4 lg:my-6" />
+
+              <QRCodeContainer url={generatedUrl} />
 
               <Separator className="my-4 lg:my-6" />
 
