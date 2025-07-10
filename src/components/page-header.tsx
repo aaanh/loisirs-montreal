@@ -13,9 +13,6 @@ export function PageHeader() {
         <h1 className="mb-2 font-bold text-gray-900 text-2xl md:text-4xl">
           Loisirs Montreal Helper
         </h1>
-        <p className="mb-4 text-gray-600 text-lg">
-          Visual URL Builder for Activity Search
-        </p>
       </div>
 
       <Alert className="shadow border-none" variant={"warning"}>
