@@ -7,7 +7,7 @@ export function PageFooter() {
   const [fullUrl, setFullUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    setFullUrl(window.location.href);
+    setFullUrl(window.location.origin);
   }, []);
 
   if (!fullUrl) return null; // or loading placeholder
