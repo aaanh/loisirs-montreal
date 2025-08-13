@@ -1,12 +1,13 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Loisirs MTL URL Builder',
-  description: 'Because we want our leisure time respected',
+  title: "Loisirs MTL URL Builder",
+  description: "Because we want our leisure time respected",
 };
 
 export default function RootLayout({
@@ -16,6 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Analytics />
       <body className={inter.className}>{children}</body>
     </html>
   );
