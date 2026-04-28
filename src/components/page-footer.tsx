@@ -1,106 +1,87 @@
 "use client";
 
-import { ExternalLink, Linkedin } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export function PageFooter() {
-  const [fullUrl, setFullUrl] = useState<string | null>(null);
+  const [origin, setOrigin] = useState<string | null>(null);
+  const { t } = useTranslation();
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    setFullUrl(window.location.origin);
+    setOrigin(window.location.origin);
   }, []);
 
-  if (!fullUrl) return null; // or loading placeholder
-
   return (
-    <footer className="flex flex-col bg-foreground mt-16 py-8 min-h-[50vh] text-white">
-      <div className="flex-1 mx-auto p-4 max-w-6xl container">
-        <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
-          {/* Project Info */}
+    <footer className="mt-16 border-t border-border/60 bg-card/20">
+      <div className="px-4 py-10 sm:px-6 lg:px-10 xl:px-16">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           <div>
-            <h3 className="mb-4 font-semibold text-lg">About This Tool</h3>
-            <p className="mb-4 text-gray-300 text-sm leading-relaxed">
-              This tool is not affiliated with, endorsed by, or associated with
-              Loisirs Montreal, the City of Montreal, or any government entity.
-              It is an independent, open-source project created to help users
-              build search URLs for the Loisirs Montreal website.
+            <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground/60">
+              {t("footer.about")}
             </p>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              This is an open-source project. Feel free to contribute or report
-              issues on GitHub.
+            <p className="max-w-sm font-mono text-[11px] leading-relaxed text-muted-foreground">
+              {t("footer.aboutDescription")}
             </p>
           </div>
 
-          {/* Links */}
           <div>
-            <h3 className="mb-4 font-semibold text-lg">Links</h3>
-            <div className="space-y-2">
-              <p className="w-2/3 overflow-ellipsis overflow-hidden text-gray-300 text-sm break-after-all break-words whitespace-nowrap">
-                <span className="font-medium">Site URL:</span>
-                <br />
+            <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground/60">
+              {t("footer.links")}
+            </p>
+            <div className="flex flex-col gap-2">
+              {origin && (
                 <a
-                  className="text-blue-500 hover:text-blue-400 underline"
-                  href={fullUrl}
+                  href={origin}
+                  className="inline-flex w-fit items-center font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {fullUrl}
+                  {origin}
                 </a>
-              </p>
-              <p className="text-gray-300 text-sm">
-                <span className="font-medium">GitHub:</span>
-                <br />
-                <a
-                  className="text-blue-500 hover:text-blue-400 underline"
-                  href="https://github.com/aaanh/loisirs-montreal"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  github.com/aaanh/loisirs-montreal
-                </a>
-              </p>
+              )}
+              <a
+                href="https://github.com/aaanh/loisirs-montreal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit items-center font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                github.com/aaanh/loisirs-montreal ↗
+              </a>
             </div>
           </div>
 
-          {/* Creator Info */}
           <div>
-            <h3 className="mb-4 font-semibold text-lg">Creator</h3>
-            <div className="space-y-3">
-              <p className="flex items-center gap-1 text-gray-300 text-sm leading-relaxed">
-                <span>Built with ❤️ by</span>
-                <a
-                  href="https://aaanh.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
-                >
-                  Anh <ExternalLink className="w-3 h-3" />
-                </a>
-              </p>
-              <p className="text-gray-300 text-sm">
-                <a
-                  href="https://linkedin.com/in/aaanh"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
-                  title="LinkedIn Profile"
-                >
-                  <Linkedin className="w-4 h-4" />
-                  LinkedIn Profile
-                </a>
-              </p>
+            <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground/60">
+              {t("footer.creator")}
+            </p>
+            <div className="flex flex-col gap-2">
+              <a
+                href="https://aaanh.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit items-center font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                aaanh.com ↗
+              </a>
+              <a
+                href="https://linkedin.com/in/aaanh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit items-center font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                linkedin.com/in/aaanh ↗
+              </a>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Copyleft */}
-      <div className="pt-6 border-gray-700 border-t text-center">
-        <p className="text-gray-400 text-sm">
-          Copyright (C) 2025 Anh Hoang Nguyen anhnguyen@aaanh.com This program
-          is free software: you can redistribute it and/or modify it under the
-          terms of the GNU General Public License as published by the Free
-          Software Foundation, either version 3 of the License, or (at your
-          option) any later version.
-        </p>
+        <div className="mt-8 flex flex-col gap-2 border-t border-border/40 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-[10px] text-muted-foreground/45">
+            © {currentYear} Anh Hoang Nguyen
+          </p>
+          <p className="font-mono text-[10px] text-muted-foreground/35">
+            GNU General Public License v3.0
+          </p>
+        </div>
       </div>
     </footer>
   );

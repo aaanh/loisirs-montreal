@@ -1,13 +1,7 @@
-import { Calendar, Clock } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CalendarDays } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { SectionPanel } from "./section-panel";
+import { useTranslation } from "react-i18next";
 
 interface DateTimeSelectionCardProps {
   date: string;
@@ -18,6 +12,20 @@ interface DateTimeSelectionCardProps {
   onEndTimeChange: (value: string) => void;
 }
 
+function formatDisplayDate(isoDate: string): string {
+  const d = isoDate?.slice(0, 10);
+  if (!d) return "—";
+  try {
+    return new Date(d + "T12:00:00").toLocaleDateString("fr-CA", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return d;
+  }
+}
+
 export function DateTimeSelectionCard({
   date,
   startTime,
@@ -26,17 +34,28 @@ export function DateTimeSelectionCard({
   onStartTimeChange,
   onEndTimeChange,
 }: DateTimeSelectionCardProps) {
+  const { t } = useTranslation();
+  const displayDate = formatDisplayDate(date);
+  const start = startTime?.slice(11, 16) || "—";
+  const end = endTime?.slice(11, 16) || "—";
+  const summary = `${displayDate} · ${start} – ${end}`;
+
   return (
-    <Card className="shadow-lg border-0">
-      <CardHeader className="flex items-center bg-linear-to-r from-purple-600 to-pink-600 rounded-t-lg text-white">
-        <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
-          <Calendar className="w-5 h-5" />
-          <span>Date & Time | Temps</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="gap-4 grid p-4">
-        <div className="gap-2 grid">
-          <Label htmlFor="activityDate">Date</Label>
+    <SectionPanel
+      title={t("dateCard.title")}
+      icon={<CalendarDays className="h-3.5 w-3.5" />}
+      summary={summary}
+    >
+      <div className="space-y-4 p-5">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="activityDate"
+            className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+          >
+            {t("dateCard.date")}
+          </label>
+          {/* [color-scheme:dark] forces the browser's native date picker chrome
+              to render in dark mode — can't be replaced by a CSS var */}
           <Input
             id="activityDate"
             type="date"
@@ -44,49 +63,52 @@ export function DateTimeSelectionCard({
             onChange={(e) =>
               onDateChange(e.target.value + "T00:00:00.000-04:00")
             }
+            className="rounded-none [color-scheme:dark]"
           />
         </div>
-        <div className="gap-4 grid grid-cols-2">
-          <div className="gap-2 grid">
-            <Label
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label
               htmlFor="startTime"
-              className="flex items-center gap-1 font-medium text-gray-700 text-sm"
+              className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
             >
-              Start Time
-            </Label>
+              {t("dateCard.start")}
+            </label>
             <Input
               id="startTime"
               type="time"
-              value={startTime.slice(11, 16)}
+              value={start === "—" ? "" : start}
               onChange={(e) => {
                 const newTime = e.target.value;
-                const current = startTime || date;
-                const datePart = (current || "").slice(0, 10);
+                const datePart = (startTime || date || "").slice(0, 10);
                 onStartTimeChange(`${datePart}T${newTime}:00.000-04:00`);
               }}
+              className="rounded-none [color-scheme:dark]"
             />
           </div>
-          <div className="gap-2 grid">
-            <Label
+
+          <div className="space-y-1.5">
+            <label
               htmlFor="endTime"
-              className="flex items-center gap-1 font-medium text-gray-700 text-sm"
+              className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
             >
-              End Time
-            </Label>
+              {t("dateCard.end")}
+            </label>
             <Input
               id="endTime"
               type="time"
-              value={endTime.slice(11, 16)}
+              value={end === "—" ? "" : end}
               onChange={(e) => {
                 const newTime = e.target.value;
-                const current = endTime || date;
-                const datePart = (current || "").slice(0, 10);
+                const datePart = (endTime || date || "").slice(0, 10);
                 onEndTimeChange(`${datePart}T${newTime}:00.000-04:00`);
               }}
+              className="rounded-none [color-scheme:dark]"
             />
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionPanel>
   );
 }

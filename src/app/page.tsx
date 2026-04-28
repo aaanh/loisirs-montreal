@@ -29,14 +29,11 @@ function decodeParams(str: string): SearchParams | null {
 export default function Home() {
   const now = new Date();
   const pad = (n: number) => n.toString().padStart(2, "0");
-  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
-    now.getDate()
-  )}`;
+  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
   const startTimeISO = `${dateStr}T${timeStr}:00.000-04:00`;
   const end = new Date(now.getTime() + 60 * 60 * 1000);
-  const endTimeStr = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
-  const endTimeISO = `${dateStr}T${endTimeStr}:00.000-04:00`;
+  const endTimeISO = `${dateStr}T${pad(end.getHours())}:${pad(end.getMinutes())}:00.000-04:00`;
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     filter: {
@@ -50,14 +47,10 @@ export default function Home() {
       },
     },
     search: "",
-    sortable: {
-      isOrderAsc: true,
-      column: "facility.name",
-    },
+    sortable: { isOrderAsc: true, column: "facility.name" },
   });
-  const [generatedUrl, setGeneratedUrl] = useState<string>("");
+  const [generatedUrl, setGeneratedUrl] = useState("");
 
-  // Derive selectedFacilities and selectedBoroughs from searchParams
   const selectedFacilities = searchParams.filter.value.facilityTypeIds
     ? searchParams.filter.value.facilityTypeIds.split(",").filter(Boolean)
     : [];
@@ -65,104 +58,37 @@ export default function Home() {
     ? searchParams.filter.value.boroughIds.split(",").filter(Boolean)
     : [];
 
-  const updateSearchParams = (updates: Partial<SearchParams>) => {
+  const updateFilter = (patch: Partial<SearchParams["filter"]["value"]>) =>
     setSearchParams((prev) => ({
       ...prev,
-      ...updates,
       filter: {
         ...prev.filter,
-        ...updates.filter,
+        value: { ...prev.filter.value, ...patch },
       },
     }));
+
+  const handleFacilityToggle = (id: string) => {
+    const next = selectedFacilities.includes(id)
+      ? selectedFacilities.filter((x) => x !== id)
+      : [...selectedFacilities, id];
+    updateFilter({ facilityTypeIds: next.join(",") });
   };
 
-  const handleFacilityToggle = (facilityId: string) => {
-    const newSelected = selectedFacilities.includes(facilityId)
-      ? selectedFacilities.filter((id) => id !== facilityId)
-      : [...selectedFacilities, facilityId];
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          facilityTypeIds: newSelected.join(","),
-        },
-      },
-    });
-  };
-
-  const handleBoroughToggle = (boroughId: string) => {
-    const newSelected = selectedBoroughs.includes(boroughId)
-      ? selectedBoroughs.filter((id) => id !== boroughId)
-      : [...selectedBoroughs, boroughId];
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          boroughIds: newSelected.join(","),
-        },
-      },
-    });
-  };
-
-  const handleSetAllFacilities = (ids: string[]) => {
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          facilityTypeIds: ids.join(","),
-        },
-      },
-    });
-  };
-
-  const handleSetAllBoroughs = (ids: string[]) => {
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          boroughIds: ids.join(","),
-        },
-      },
-    });
-  };
-
-  const handleClearAllFacilities = () => {
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          facilityTypeIds: "",
-        },
-      },
-    });
-  };
-
-  const handleClearAllBoroughs = () => {
-    updateSearchParams({
-      filter: {
-        ...searchParams.filter,
-        value: {
-          ...searchParams.filter.value,
-          boroughIds: "",
-        },
-      },
-    });
+  const handleBoroughToggle = (id: string) => {
+    const next = selectedBoroughs.includes(id)
+      ? selectedBoroughs.filter((x) => x !== id)
+      : [...selectedBoroughs, id];
+    updateFilter({ boroughIds: next.join(",") });
   };
 
   useEffect(() => {
     setGeneratedUrl(generateUrl(searchParams));
   }, [searchParams]);
 
-  // On mount, check for URL param and update state if present
+  // Restore from URL param on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    const param = url.searchParams.get("q");
+    const param = new URL(window.location.href).searchParams.get("q");
     if (param) {
       const decoded = decodeParams(param);
       if (decoded) setSearchParams(decoded);
@@ -173,105 +99,76 @@ export default function Home() {
   // Sync URL with state
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const encoded = encodeParams(searchParams);
     const url = new URL(window.location.href);
-    url.searchParams.set("q", encoded);
+    url.searchParams.set("q", encodeParams(searchParams));
     window.history.replaceState({}, "", url.toString());
   }, [searchParams]);
 
   return (
-    <div className="flex flex-col bg-linear-to-br from-blue-50 via-white to-purple-50 min-h-screen">
-      <div className="flex-1 mx-auto px-4 py-8 max-w-6xl container">
-        <PageHeader />
+    <div className="flex min-h-screen flex-col bg-background">
+      <PageHeader />
 
-        <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
-          {/* Left Column - Filters */}
-          <div className="space-y-6 lg:col-span-2">
+      <main className="flex-1 px-4 sm:px-6 lg:px-10 xl:px-16 py-8 lg:py-10">
+        {/* Section label */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4 lg:gap-6">
+          {/* ── Left: filters ─────────────────────── */}
+          <div className="space-y-3">
             <SearchQueryCard
               searchValue={searchParams.search}
-              onSearchChange={(value) => updateSearchParams({ search: value })}
+              onSearchChange={(v) =>
+                setSearchParams((p) => ({ ...p, search: v }))
+              }
               sortColumns={sortColumns}
               currentColumn={searchParams.sortable.column}
               isOrderAsc={searchParams.sortable.isOrderAsc}
-              onColumnChange={(value) =>
-                updateSearchParams({
-                  sortable: {
-                    ...searchParams.sortable,
-                    column: value,
-                  },
-                })
+              onColumnChange={(v) =>
+                setSearchParams((p) => ({
+                  ...p,
+                  sortable: { ...p.sortable, column: v },
+                }))
               }
-              onOrderChange={(value) =>
-                updateSearchParams({
-                  sortable: {
-                    ...searchParams.sortable,
-                    isOrderAsc: value,
-                  },
-                })
+              onOrderChange={(v) =>
+                setSearchParams((p) => ({
+                  ...p,
+                  sortable: { ...p.sortable, isOrderAsc: v },
+                }))
               }
             />
 
             <NotesCard />
 
-            {/* Date & Time Selection */}
             <DateTimeSelectionCard
               date={searchParams.filter.value.dates[0] || ""}
               startTime={searchParams.filter.value.startTime}
               endTime={searchParams.filter.value.endTime}
-              onDateChange={(value) =>
-                updateSearchParams({
-                  filter: {
-                    ...searchParams.filter,
-                    value: {
-                      ...searchParams.filter.value,
-                      dates: [value],
-                    },
-                  },
-                })
-              }
-              onStartTimeChange={(value) =>
-                updateSearchParams({
-                  filter: {
-                    ...searchParams.filter,
-                    value: {
-                      ...searchParams.filter.value,
-                      startTime: value,
-                    },
-                  },
-                })
-              }
-              onEndTimeChange={(value) =>
-                updateSearchParams({
-                  filter: {
-                    ...searchParams.filter,
-                    value: {
-                      ...searchParams.filter.value,
-                      endTime: value,
-                    },
-                  },
-                })
-              }
+              onDateChange={(v) => updateFilter({ dates: [v] })}
+              onStartTimeChange={(v) => updateFilter({ startTime: v })}
+              onEndTimeChange={(v) => updateFilter({ endTime: v })}
             />
 
             <FacilityTypesCard
               facilityTypes={facilityTypes}
               selectedFacilities={selectedFacilities}
               onFacilityToggle={handleFacilityToggle}
-              onSetAllFacilities={handleSetAllFacilities}
-              onClearAllFacilities={handleClearAllFacilities}
+              onSetAllFacilities={(ids) =>
+                updateFilter({ facilityTypeIds: ids.join(",") })
+              }
+              onClearAllFacilities={() => updateFilter({ facilityTypeIds: "" })}
             />
 
             <BoroughsCard
               boroughs={boroughs}
               selectedBoroughs={selectedBoroughs}
               onBoroughToggle={handleBoroughToggle}
-              onSetAllBoroughs={handleSetAllBoroughs}
-              onClearAllBoroughs={handleClearAllBoroughs}
+              onSetAllBoroughs={(ids) =>
+                updateFilter({ boroughIds: ids.join(",") })
+              }
+              onClearAllBoroughs={() => updateFilter({ boroughIds: "" })}
             />
           </div>
 
-          {/* Right Column - URL Output */}
-          <div className="lg:col-span-1">
+          {/* ── Right: URL output ─────────────────── */}
+          <div>
             <UrlOutputCard
               generatedUrl={generatedUrl}
               searchParams={searchParams}
@@ -281,9 +178,8 @@ export default function Home() {
             />
           </div>
         </div>
-      </div>
-      {/* Spacer for mobile to allow scrolling past the fixed URL card */}
-      <div className="lg:hidden h-60" />
+      </main>
+
       <PageFooter />
     </div>
   );

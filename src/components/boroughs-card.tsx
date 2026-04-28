@@ -1,16 +1,9 @@
-import { MapPin, MapPinHouse, MapPinHouseIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Borough } from "@/types/search";
 import { Button } from "@/components/ui/button";
+import { SectionPanel } from "./section-panel";
+import { useTranslation } from "react-i18next";
 
 interface BoroughsCardProps {
   boroughs: Borough[];
@@ -20,6 +13,19 @@ interface BoroughsCardProps {
   onClearAllBoroughs: () => void;
 }
 
+function buildSummary(
+  boroughs: Borough[],
+  selected: string[],
+  allBoroughsText: string,
+): string {
+  if (selected.length === 0) return allBoroughsText;
+  const names = selected
+    .slice(0, 3)
+    .map((id) => boroughs.find((b) => b.id === id)?.name ?? id);
+  const rest = selected.length - names.length;
+  return rest > 0 ? `${names.join(", ")} +${rest}` : names.join(", ");
+}
+
 export function BoroughsCard({
   boroughs,
   selectedBoroughs,
@@ -27,90 +33,86 @@ export function BoroughsCard({
   onSetAllBoroughs,
   onClearAllBoroughs,
 }: BoroughsCardProps) {
+  const { t } = useTranslation();
   const allSelected =
     boroughs.length > 0 && selectedBoroughs.length === boroughs.length;
-  const anySelected = selectedBoroughs.length > 0;
-  const handleSelectAll = () => {
-    onSetAllBoroughs(boroughs.map((b) => b.id));
-  };
-  const handleDeselectAll = () => {
-    onClearAllBoroughs();
-  };
 
   return (
-    <Card className="shadow-lg border-0">
-      <CardHeader className="flex flex-wrap items-center gap-2 bg-linear-to-r from-yellow-600 to-orange-600 rounded-t-lg text-white">
-        <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
-          <MapPinHouseIcon /> Boroughs
-        </CardTitle>
-        <div className="flex gap-2">
+    <SectionPanel
+      title={t("boroughsCard.title")}
+      icon={<MapPin className="h-3.5 w-3.5" />}
+      summary={buildSummary(
+        boroughs,
+        selectedBoroughs,
+        t("boroughsCard.allBoroughs"),
+      )}
+      count={selectedBoroughs.length > 0 ? selectedBoroughs.length : undefined}
+    >
+      {/* Sub-header */}
+      <div className="flex items-center justify-end border-b border-border bg-background px-5 py-2 gap-2">
+        <span className="font-mono text-[10px] text-muted-foreground">
+          {selectedBoroughs.length === 0
+            ? t("boroughsCard.noneSelected")
+            : t("boroughsCard.selectedCount", {
+                selected: selectedBoroughs.length,
+                total: boroughs.length,
+              })}
+        </span>
+        <div className="flex gap-1">
           <Button
             size="sm"
-            variant="secondary"
-            onClick={handleSelectAll}
-            className="text-xs"
+            variant="outline"
+            onClick={() => onSetAllBoroughs(boroughs.map((b) => b.id))}
+            disabled={allSelected}
+            className="h-6 rounded-none px-2 font-mono text-[10px] uppercase tracking-widest"
           >
-            Select All
+            {t("boroughsCard.all")}
           </Button>
           <Button
             size="sm"
-            variant="secondary"
-            onClick={handleDeselectAll}
-            className="text-xs"
+            variant="outline"
+            onClick={onClearAllBoroughs}
+            disabled={selectedBoroughs.length === 0}
+            className="h-6 rounded-none px-2 font-mono text-[10px] uppercase tracking-widest"
           >
-            Deselect All
+            {t("boroughsCard.none")}
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="p-4 lg:p-6">
-        <div className="gap-3 grid grid-cols-1 lg:grid-cols-2">
-          {boroughs.map((borough) => (
-            <div
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2">
+        {boroughs.map((borough) => {
+          const isSelected = selectedBoroughs.includes(borough.id);
+          return (
+            <label
               key={borough.id}
-              className="flex items-center space-x-3 hover:bg-gray-50 p-3 border border-gray-200 rounded-lg transition-colors"
+              htmlFor={borough.id}
+              className={[
+                "flex cursor-pointer items-center gap-3 bg-background px-4 py-3 transition-colors hover:bg-muted",
+                isSelected && "bg-muted/60",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               <Checkbox
                 id={borough.id}
-                checked={selectedBoroughs.includes(borough.id)}
+                checked={isSelected}
                 onCheckedChange={() => onBoroughToggle(borough.id)}
+                className="shrink-0 rounded-none"
               />
-              <Label
-                htmlFor={borough.id}
-                className="flex flex-1 items-center gap-2 min-w-0 text-sm cursor-pointer"
+              <span
+                className={[
+                  "truncate text-sm transition-colors",
+                  isSelected ? "text-foreground" : "text-muted-foreground",
+                ].join(" ")}
               >
-                <div
-                  className={`w-3 h-3 rounded-full ${borough.color} flex-shrink-0`}
-                />
-                <span className="font-medium truncate">{borough.name}</span>
-              </Label>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4">
-          <p className="mb-2 text-gray-600 text-sm">
-            Selected: {selectedBoroughs.length} of {boroughs.length} boroughs
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {selectedBoroughs.slice(0, 4).map((id) => {
-              const borough = boroughs.find((b) => b.id === id);
-              return borough ? (
-                <Badge
-                  key={id}
-                  variant="outline"
-                  className="max-w-full text-xs"
-                >
-                  <span className="block truncate">{borough.name}</span>
-                </Badge>
-              ) : null;
-            })}
-            {selectedBoroughs.length > 4 && (
-              <Badge variant="outline" className="text-xs">
-                +{selectedBoroughs.length - 4} more
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+                {borough.name}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </SectionPanel>
   );
 }

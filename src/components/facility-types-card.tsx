@@ -1,16 +1,9 @@
-import { Filter } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { LayoutGrid } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { FacilityType } from "@/types/search";
 import { Button } from "@/components/ui/button";
+import { SectionPanel } from "./section-panel";
+import { useTranslation } from "react-i18next";
 
 interface FacilityTypesCardProps {
   facilityTypes: FacilityType[];
@@ -20,6 +13,21 @@ interface FacilityTypesCardProps {
   onClearAllFacilities: () => void;
 }
 
+function buildSummary(
+  facilityTypes: FacilityType[],
+  selected: string[],
+  allFacilitiesText: string,
+  getFacilityName: (id: string) => string,
+): string {
+  if (selected.length === 0) return allFacilitiesText;
+  const validIds = new Set(facilityTypes.map((f) => f.id));
+  const names = selected
+    .slice(0, 3)
+    .map((id) => (validIds.has(id) ? getFacilityName(id) : id));
+  const rest = selected.length - names.length;
+  return rest > 0 ? `${names.join(", ")} +${rest}` : names.join(", ");
+}
+
 export function FacilityTypesCard({
   facilityTypes,
   selectedFacilities,
@@ -27,80 +35,100 @@ export function FacilityTypesCard({
   onSetAllFacilities,
   onClearAllFacilities,
 }: FacilityTypesCardProps) {
+  const { t } = useTranslation();
+  const getFacilityName = (id: string) => {
+    const fallback =
+      facilityTypes.find((facility) => facility.id === id)?.name ?? id;
+    return t(`facilityTypes.${id}`, { defaultValue: fallback });
+  };
   const allSelected =
     facilityTypes.length > 0 &&
     selectedFacilities.length === facilityTypes.length;
-  const anySelected = selectedFacilities.length > 0;
-  const handleSelectAll = () => {
-    onSetAllFacilities(facilityTypes.map((ft) => ft.id));
-  };
-  const handleDeselectAll = () => {
-    onClearAllFacilities();
-  };
 
   return (
-    <Card className="shadow-lg border-0">
-      <CardHeader className="flex flex-wrap items-center gap-2 bg-linear-to-r from-green-600 to-blue-600 rounded-t-lg text-white">
-        <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
-          <Filter className="w-5 h-5" />
-          Facility Types | Types de plateau
-        </CardTitle>
-        <div className="flex gap-2">
+    <SectionPanel
+      title={t("facilitiesCard.title")}
+      icon={<LayoutGrid className="h-3.5 w-3.5" />}
+      summary={buildSummary(
+        facilityTypes,
+        selectedFacilities,
+        t("facilitiesCard.allFacilities"),
+        getFacilityName,
+      )}
+      count={
+        selectedFacilities.length > 0 ? selectedFacilities.length : undefined
+      }
+    >
+      {/* Sub-header */}
+      <div className="flex items-center justify-end gap-2 border-b border-border bg-background px-5 py-2">
+        <span className="font-mono text-[10px] text-muted-foreground">
+          {selectedFacilities.length === 0
+            ? t("facilitiesCard.noneSelected")
+            : t("facilitiesCard.selectedCount", {
+                selected: selectedFacilities.length,
+                total: facilityTypes.length,
+              })}
+        </span>
+        <div className="flex gap-1">
           <Button
             size="sm"
-            variant="secondary"
-            onClick={handleSelectAll}
-            className="text-xs"
+            variant="outline"
+            onClick={() => onSetAllFacilities(facilityTypes.map((ft) => ft.id))}
+            disabled={allSelected}
+            className="h-6 rounded-none px-2 font-mono text-[10px] uppercase tracking-widest"
           >
-            Select All
+            {t("facilitiesCard.all")}
           </Button>
           <Button
             size="sm"
-            variant="secondary"
-            onClick={handleDeselectAll}
-            className="text-xs"
+            variant="outline"
+            onClick={onClearAllFacilities}
+            disabled={selectedFacilities.length === 0}
+            className="h-6 rounded-none px-2 font-mono text-[10px] uppercase tracking-widest"
           >
-            Deselect All
+            {t("facilitiesCard.none")}
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {facilityTypes.map((facility) => (
-            <div
+      </div>
+
+      {/* Grid — gap-px + bg-border creates hairline dividers between cells */}
+      <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">
+        {facilityTypes.map((facility) => {
+          const isSelected = selectedFacilities.includes(facility.id);
+          return (
+            <label
               key={facility.id}
-              className="flex items-center space-x-3 hover:bg-gray-50 p-3 border border-gray-200 rounded-lg transition-colors"
+              htmlFor={facility.id}
+              className={[
+                "flex cursor-pointer items-center gap-3 bg-background px-4 py-3 transition-colors hover:bg-muted",
+                isSelected && "bg-muted/60",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
+              {/* Checkbox uses data-checked:bg-primary data-checked:border-primary
+                  from its defaults — no className override needed for color */}
               <Checkbox
                 id={facility.id}
-                checked={selectedFacilities.includes(facility.id)}
+                checked={isSelected}
                 onCheckedChange={() => onFacilityToggle(facility.id)}
+                className="shrink-0 rounded-none"
               />
-              <Label
-                htmlFor={facility.id}
-                className="flex flex-1 items-center gap-2 text-sm cursor-pointer"
+              <span className="shrink-0 text-base leading-none">
+                {facility.icon}
+              </span>
+              <span
+                className={[
+                  "truncate text-sm transition-colors",
+                  isSelected ? "text-foreground" : "text-muted-foreground",
+                ].join(" ")}
               >
-                <span className="text-lg">{facility.icon}</span>
-                <span className="font-medium truncate">{facility.name}</span>
-              </Label>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {selectedFacilities.map((id) => {
-            const facility = facilityTypes.find((f) => f.id === id);
-            return facility ? (
-              <Badge
-                key={id}
-                variant="secondary"
-                className="bg-orange-100 text-orange-800 text-xs"
-              >
-                {facility.icon} {facility.name}
-              </Badge>
-            ) : null;
-          })}
-        </div>
-      </CardContent>
-    </Card>
+                {getFacilityName(facility.id)}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </SectionPanel>
   );
 }
